@@ -1,0 +1,180 @@
+# -*- coding: utf-8 -*-
+# vim: ft=yaml
+# yamllint disable rule:comments-indentation
+---
+calibre_web:
+  install:
+      # Install rootless containers running as dedicated user.
+    rootless: true
+      # When applying `clean` states, also remove application data.
+      # Setting this to true might incur accidental data loss!
+    remove_all_data_for_sure: false
+    # Managing the Calibre-Web configuration is quite hacky since we have to
+    # directly modify the database. If you want to unset a value in mapstack,
+    # set its value to false.
+    # See configuration reference below for row titles. The values are not checked.
+  config:
+    config_calibre_dir: /books
+    config_kepubifypath: /usr/bin/kepubify
+    config_rarfile_location: /usr/bin/unrar
+  container:
+      # allow Google OAUTH to work (OAUTHLIB_RELAX_TOKEN_SCOPE=1)
+    google_oauth: false
+    host_port: 8003
+      # x86-64 only: Adds the ability to perform ebook conversion by including
+      # calibre inside the container (will enlarge size).
+    include_calibre: true
+    pgid: null
+    puid: null
+      # Container timezone
+    tz: null
+
+########################################################################################
+# Configuration reference
+# Since Calibre-Web does not work with env vars or config files, but rather saves its
+# settings inside the sqlite database, this formula has to update the database directly.
+# It is quite hacky and might break at some point. Be sure to have backups and take care
+# which values you set.
+# The following values have been extracted from the table structure:
+
+    # mail_server: 'mail.example.com'
+    # mail_port: 25
+    # mail_use_ssl: 0
+    # mail_login: 'mail@example.com'
+    # mail_password: 'mypassword'
+    # mail_from: 'automailer <mail@example.com>'
+    # config_calibre_dir: '/books'
+    # config_port: 8083
+    # config_certfile: ''
+    # config_keyfile: ''
+    # config_calibre_web_title: 'Calibre-Web'
+    # config_books_per_page: 60
+    # config_random_books: 4
+    # config_read_column: 0
+    # config_title_regex: '^(A|The|An|Der|Die|Das|Den|Ein|Eine|Einen|Dem|Des|Einem|Eines)\s+'
+    # config_log_level: 10
+    # config_uploading: 1
+    # config_anonbrowse: 1
+    # config_public_reg: 0
+    # config_default_role: 0
+    # config_default_show: 6143
+    # config_columns_to_ignore: null
+    # config_use_google_drive: 0
+    # config_google_drive_folder: null
+    # config_google_drive_watch_changes_response: '{}'
+    # config_remote_login: 0
+    # config_use_goodreads: 0
+    # config_goodreads_api_key: ''
+    # config_goodreads_api_secret: ''
+    # config_mature_content_tags: ''
+    # config_logfile: '/config/calibre-web.log'
+    # config_ebookconverter: 0
+    # config_converterpath: '/usr/bin/ebook-convert'
+    # config_calibre: ''
+    # config_rarfile_location: '/usr/bin/unrar'
+    # config_authors_max: 0
+    # config_theme: 0
+    # config_access_log: 0
+    # config_access_logfile: ''
+    # config_kobo_sync: 0
+    # config_denied_tags: ''
+    # config_allowed_tags: ''
+    # config_restricted_column: 0
+    # config_denied_column_value: ''
+    # config_allowed_column_value: ''
+    # config_login_type: 0
+    # config_kobo_proxy: 0
+    # config_ldap_provider_url: 'localhost'
+    # config_ldap_port: 389
+    # config_ldap_schema: 'ldap'
+    # config_ldap_serv_username: 'cn=admin,dc=example,dc=org'
+    # config_ldap_serv_password: ''
+    # config_ldap_use_ssl: 0
+    # config_ldap_use_tls: 0
+    # config_ldap_require_cert: 0
+    # config_ldap_cert_path: ''
+    # config_ldap_dn: 'dc=example,dc=org'
+    # config_ldap_user_object: 'uid=%s'
+    # config_ldap_openldap: 0
+    # config_updatechannel: 0
+    # config_reverse_proxy_login_header_name: ''
+    # config_allow_reverse_proxy_header_login: 0
+    # mail_size: 26214400
+    # mail_server_type: 0
+    # mail_gmail_token: {}
+    # config_external_port: 8083
+    # config_register_email: 0
+    # config_ldap_authentication: 0
+    # config_ldap_encryption: 0
+    # config_ldap_cacert_path: ''
+    # config_ldap_key_path: ''
+    # config_ldap_member_user_object: ''
+    # config_ldap_group_object_filter: '(&(objectclass=posixGroup)(cn=%s))'
+    # config_ldap_group_members_field: 'memberUid'
+    # config_ldap_group_name: 'calibreweb'
+    # config_kepubifypath: '/usr/bin/kepubify'
+    # config_upload_formats: 'doc,wav,txt,rtf,mobi,mp4,mp3,m4b,cbz,cbr,prc,epub,cbt,html,opus,djvu,lit,azw3,kepub,azw,m4a,docx,fb2,odt,pdf,ogg,flac'
+
+########################################################################################
+
+  lookup:
+    rootgroup: root
+    compose:
+      create_pod: null
+      pod_args: null
+      project_name: calibre_web
+      remove_orphans: true
+      service:
+        container_prefix: null
+        ephemeral: true
+        pod_prefix: null
+        restart_policy: on-failure
+        separator: null
+        stop_timeout: null
+    paths:
+      base: /opt/containers/calibre_web
+      compose: docker-compose.yml
+      config_calibre_web: calibre_web.env
+      books: books
+      data: data
+    user:
+      groups: []
+      home: null
+      name: calibre_web
+      shell: /usr/sbin/nologin
+      uid: null
+    containers:
+      calibre_web:
+        image: ghcr.io/linuxserver/calibre-web
+
+  tofs:
+      # The files_switch key serves as a selector for alternative
+      # directories under the formula files directory. See TOFS pattern
+      # doc for more info.
+      # Note: Any value not evaluated by `config.get` will be used literally.
+      # This can be used to set custom paths, as many levels deep as required.
+    files_switch:
+      - any/path/can/be/used/here
+      - id
+      - roles
+      - osfinger
+      - os
+      - os_family
+
+      # All aspects of path/file resolution are customisable using the options below.
+      # This is unnecessary in most cases; there are sensible defaults.
+      # Default path: salt://< path_prefix >/< dirs.files >/< dirs.default >
+      # I.e.: salt://calibre_web/files/default
+      # path_prefix: template_alt
+      # dirs:
+      #   files: files_alt
+      #   default: default_alt
+      # The entries under `source_files` are prepended to the default source files
+      # given for the state
+    source_files:
+      Calibre-Web compose file is managed:
+        - docker-compose_alt.yml
+        - docker-compose_alt.yml.j2
+      calibre_web environment file is managed:
+        - calibre_web_alt.env
+        - calibre_web_alt.env.j2

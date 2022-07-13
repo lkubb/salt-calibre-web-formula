@@ -1,0 +1,53 @@
+# -*- coding: utf-8 -*-
+# vim: ft=yaml
+#
+# Set default values.
+---
+values:
+  lookup:
+    rootgroup: root
+    compose:
+      create_pod: null
+      pod_args: null
+      project_name: calibre_web
+      remove_orphans: true
+      service:
+        container_prefix: null
+        ephemeral: true
+        pod_prefix: null
+        restart_policy: on-failure
+        separator: null
+        stop_timeout: null
+    paths:
+      base: /opt/containers/calibre_web
+      compose: docker-compose.yml
+      config_calibre_web: calibre_web.env
+      books: books
+      data: data
+    user:
+      groups: []
+      home: null
+      name: calibre_web
+      shell: /usr/sbin/nologin
+      uid: null
+    containers:
+      calibre_web:
+        image: ghcr.io/linuxserver/calibre-web
+  install:
+    rootless: true
+    remove_all_data_for_sure: false
+  config:
+    config_calibre_dir: /books
+    config_kepubifypath: /usr/bin/kepubify
+    config_rarfile_location: /usr/bin/unrar
+  container:
+    google_oauth: false
+    host_port: 8003
+    include_calibre: true
+    pgid: null
+    puid: null
+    tz: null
+  # Just here for testing
+  added_in_defaults: defaults_value
+  winner: defaults
+...

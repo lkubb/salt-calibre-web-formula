@@ -1,0 +1,14 @@
+---
+version: "2.1"
+services:
+  app:
+    image: {{ calibre_web.lookup.containers.calibre_web.image }}
+    container_name: calibre-web
+    env_file:
+      - calibre_web.env
+    volumes:
+      - {{ calibre_web.lookup.paths.data }}:/config
+      - {{ calibre_web.lookup.paths.books }}:/books
+    ports:
+      - {{ calibre_web.container.host_port }}:8083
+    restart: unless-stopped

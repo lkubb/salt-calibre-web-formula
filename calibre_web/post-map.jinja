@@ -1,0 +1,38 @@
+{#- -*- coding: utf-8 -*- #}
+{#- vim: ft=jinja #}
+
+{#-
+    Convenience: Make relative paths absolute.
+-#}
+
+{%- set base_path = mapdata.lookup.paths.base %}
+{%- for path, val in mapdata.lookup.paths.items() %}
+  {%- if val is string and not val.startswith("/") %}
+    {%- do mapdata.lookup.paths.update({path: base_path | path_join(val)}) %}
+  {%- endif %}
+{%- endfor %}
+
+{%- if not mapdata.lookup.user.home %}
+  {%- do mapdata.lookup.user.update({"home": base_path}) %}
+{%- endif %}
+
+
+{#-
+    Convenience: If calibre is included in the container,
+    set the converter path accordingly.
+-#}
+
+{%- if mapdata.container.include_calibre %}
+  {%- do mapdata.config.update({"config_converterpath": "/usr/bin/ebook-convert"}) %}
+{%- endif %}
+
+
+{#- Remove values from config if they are false. Null/None exists in sqlite. -#}
+{%- set cleaned_config = {} %}
+{%- for conf in mapdata.config %}
+  {%- if mapdata.config[conf] is not false %}
+    {%- do cleaned_config.update({conf: mapdata.config[conf]}) %}
+  {%- endif %}
+{%- endfor %}
+
+{%- do mapdata.update({"config": cleaned_config}) %}
