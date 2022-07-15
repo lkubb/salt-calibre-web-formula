@@ -27,7 +27,11 @@
 {%- endif %}
 
 
-{#- Remove values from config if they are false. Null/None exists in sqlite. -#}
+{#-
+    Remove values from config if they are false.
+    Null/None exists in sqlite.
+-#}
+
 {%- set cleaned_config = {} %}
 {%- for conf in mapdata.config %}
   {%- if mapdata.config[conf] is not false %}
@@ -36,3 +40,25 @@
 {%- endfor %}
 
 {%- do mapdata.update({"config": cleaned_config}) %}
+
+
+{#-
+    Convenience: Make sure container pgid is the same as gid when
+    dedicated media group is in use.
+-#}
+
+{%- if mapdata.container.pgid is none and mapdata.lookup.media_group.gid is not none %}
+  {%- do mapdata.container.update({"pgid": mapdata.lookup.media_group.gid}) %}
+{%- endif %}
+
+
+{#-
+    If userns_keep_id is in use, it has to be passed to the pod if pods
+    are in use.
+-#}
+
+{%- if mapdata.container.userns_keep_id and mapdata.install.rootless %}
+  {%- if mapdata.lookup.compose.create_pod is not false %}
+    {%- do mapdata | append_dict_key_value("lookup:compose:pod_args", {"userns": "keep-id"}) %}
+  {%- endif %}
+{%- endif %}

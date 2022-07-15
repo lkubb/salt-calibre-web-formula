@@ -27,6 +27,10 @@
             "image": "ghcr.io/linuxserver/calibre-web"
           }
         },
+        "media_group": {
+          "gid": 3414,
+          "name": "mediarr"
+        },
         "paths": {
           "books": "books",
           "data": "data"
@@ -44,7 +48,8 @@
           "include_calibre": true,
           "pgid": null,
           "puid": null,
-          "tz": null
+          "tz": null,
+          "userns_keep_id": true
         }
       },
       "_template": "https://github.com/lkubb/salt-template-formula-compose"

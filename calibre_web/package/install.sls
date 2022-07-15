@@ -8,7 +8,7 @@
 Calibre-Web user account is present:
   user.present:
 {%- for param, val in calibre_web.lookup.user.items() %}
-{%-   if val is not none and param != "groups" %}
+{%-   if val is not none and param not in ["groups", "gid"] %}
     - {{ param }}: {{ val }}
 {%-   endif %}
 {%- endfor %}
@@ -17,6 +17,16 @@ Calibre-Web user account is present:
     - groups: {{ calibre_web.lookup.user.groups | json }}
     # (on Debian 11) subuid/subgid are only added automatically for non-system users
     - system: false
+{%- if not calibre_web.lookup.media_group.gid %}]
+    - gid: {{ calibre_web.lookup.user.gid or "null" }}
+{%- else %}
+    - gid: {{ calibre_web.lookup.media_group.gid }}
+    - require:
+      - group: {{ calibre_web.lookup.media_group.name }}
+  group.present:
+    - name: {{ calibre_web.lookup.media_group.name }}
+    - gid: {{ calibre_web.lookup.media_group.gid }}
+{%- endif %}
 
 Calibre-Web user session is initialized at boot:
   compose.lingering_managed:
@@ -28,7 +38,7 @@ Calibre-Web paths are present:
     - names:
       - {{ calibre_web.lookup.paths.base }}
     - user: {{ calibre_web.lookup.user.name }}
-    - group: {{ calibre_web.lookup.user.name }}
+    - group: __slot__:salt:user.primary_group({{ calibre_web.lookup.user.name }})
     - makedirs: true
     - require:
       - user: {{ calibre_web.lookup.user.name }}
@@ -53,10 +63,23 @@ Calibre-Web is installed:
   compose.installed:
     - name: {{ calibre_web.lookup.paths.compose }}
 {%- for param, val in calibre_web.lookup.compose.items() %}
-{%-   if val is not none and param != "service" %}
+{%-   if val is not none and param not in ["service"] %}
     - {{ param }}: {{ val }}
 {%-   endif %}
 {%- endfor %}
+{%- if calibre_web.container.userns_keep_id and calibre_web.install.rootless %}
+    - podman_create_args:
+{%-   if calibre_web.lookup.compose.create_pod is false %}
+{#-     post-map.jinja ensures this is in pod_args if pods are in use #}
+        # this maps the host uid/gid to the same ones inside the container
+        # important for network share access
+        # https://github.com/containers/podman/issues/5239#issuecomment-587175806
+      - userns: keep-id
+{%-   endif %}
+        # linuxserver images generally assume to be started as root,
+        # then drop privileges as defined in PUID/PGID.
+      - user: 0
+{%- endif %}
 {%- for param, val in calibre_web.lookup.compose.service.items() %}
 {%-   if val is not none %}
     - {{ param }}: {{ val }}

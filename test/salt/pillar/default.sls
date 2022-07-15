@@ -34,6 +34,9 @@ calibre_web:
     containers:
       calibre_web:
         image: ghcr.io/linuxserver/calibre-web
+    media_group:
+      gid: 3414
+      name: mediarr
   install:
     rootless: true
     remove_all_data_for_sure: false
@@ -48,6 +51,7 @@ calibre_web:
     pgid: null
     puid: null
     tz: null
+    userns_keep_id: true
 
   tofs:
     # The files_switch key serves as a selector for alternative

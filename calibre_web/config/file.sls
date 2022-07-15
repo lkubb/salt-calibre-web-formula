@@ -20,7 +20,7 @@ Calibre-Web environment files are managed:
                   }}
     - mode: '0640'
     - user: root
-    - group: {{ calibre_web.lookup.user.name }}
+    - group: __slot__:salt:user.primary_group({{ calibre_web.lookup.user.name }})
     - makedirs: True
     - template: jinja
     - require:
@@ -49,6 +49,11 @@ Calibre-Web has initialized the database:
     - unless:
       - fun: file.file_exists
         path: {{ calibre_web.lookup.paths.data | path_join("app.db") }}
+  file.exists:
+    - name: {{ calibre_web.lookup.paths.data | path_join("app.db") }}
+    - retry:
+        attempts: 15
+        interval: 2
 
 Calibre-Web is not running before database modification:
   compose.dead:
@@ -76,6 +81,8 @@ Calibre-Web config is applied to the database:
       - Calibre-Web has initialized the database
     - prereq:
       - Calibre-Web is not running before database modification
+    - require:
+      - file: {{ calibre_web.lookup.paths.data | path_join("app.db") }}
 
 Calibre-Web is running again after shutdown:
   compose.running:
