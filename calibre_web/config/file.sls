@@ -51,9 +51,10 @@ Calibre-Web has initialized the database:
         path: {{ calibre_web.lookup.paths.data | path_join("app.db") }}
   file.exists:
     - name: {{ calibre_web.lookup.paths.data | path_join("app.db") }}
+    # installing the mods can take some time
     - retry:
         attempts: 15
-        interval: 2
+        interval: 5
 
 Calibre-Web is not running before database modification:
   compose.dead:
