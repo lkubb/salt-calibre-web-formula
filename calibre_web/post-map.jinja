@@ -43,12 +43,14 @@
 
 
 {#-
-    Convenience: Make sure container pgid is the same as gid when
-    dedicated media group is in use.
+    Convenience: Make sure container puid/pgid is the same as uid/gid when
+    userns=keep-id is in use.
 -#}
 
-{%- if mapdata.container.pgid is none and mapdata.lookup.media_group.gid is not none %}
-  {%- do mapdata.container.update({"pgid": mapdata.lookup.media_group.gid}) %}
+{%- if mapdata.container.userns_keep_id %}
+  {%- set pgid = mapdata.container.pgid or mapdata.lookup.media_group.gid or mapdata.lookup.user.gid or none %}
+  {%- set puid = mapdata.container.puid or mapdata.lookup.user.uid or none %}
+  {%- do mapdata.container.update({"pgid": pgid, "puid": puid}) %}
 {%- endif %}
 
 

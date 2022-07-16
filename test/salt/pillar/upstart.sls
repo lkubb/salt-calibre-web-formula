@@ -30,7 +30,7 @@ calibre_web:
       home: null
       name: calibre_web
       shell: /usr/sbin/nologin
-      uid: null
+      uid: 8004
       gid: null
     containers:
       calibre_web:

@@ -43,6 +43,8 @@ Special notes
 -------------
 * This formula is written with the custom `compose modules <https://github.com/lkubb/salt-podman-formula>`_ in mind and will not work without them.
 * The initial credentials are ``admin``/``admin123``. It would be possible to integrate updating the default credentials into this formula as well, but that would require computing pbkdf2-hmac-sha256 and updating the user database.
+* Calibre-Web needs ownership of its ``books`` directory since it uses ``shutil.copy``, which tries to chmod files. This is especially problematic on network mounts. Make sure the ownership is correct, otherwise uploads and renames might fail (by default, Calibre-Web runs as ``8004:3414``).
+* If your ``books`` directory is on a CIFS/SMB mount, make sure it is mounted with ``nobrl``, otherwise the database will seem to be locked.
 
 Configuration
 -------------
