@@ -33,6 +33,9 @@ Calibre-Web user session is not initialized at boot:
   compose.lingering_managed:
     - name: {{ calibre_web.lookup.user.name }}
     - enable: false
+    - onlyif:
+      - fun: user.info
+        name: {{ calibre_web.lookup.user.name }}
 
 Calibre-Web user account is absent:
   user.absent:

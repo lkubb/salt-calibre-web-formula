@@ -31,6 +31,7 @@ calibre_web:
       name: calibre_web
       shell: /usr/sbin/nologin
       uid: null
+      gid: null
     containers:
       calibre_web:
         image: ghcr.io/linuxserver/calibre-web
