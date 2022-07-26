@@ -32,6 +32,8 @@ Calibre-Web user session is initialized at boot:
   compose.lingering_managed:
     - name: {{ calibre_web.lookup.user.name }}
     - enable: {{ calibre_web.install.rootless }}
+    - require:
+      - user: {{ calibre_web.lookup.user.name }}
 
 Calibre-Web paths are present:
   file.directory:

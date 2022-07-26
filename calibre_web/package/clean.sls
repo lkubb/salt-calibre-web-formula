@@ -43,6 +43,9 @@ Calibre-Web user account is absent:
     - purge: {{ calibre_web.install.remove_all_data_for_sure }}
     - require:
       - Calibre-Web is absent
+    - retry:
+        attempts: 5
+        interval: 2
 
 {%- if calibre_web.install.remove_all_data_for_sure %}
 
