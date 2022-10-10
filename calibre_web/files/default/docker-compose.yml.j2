@@ -11,4 +11,8 @@ services:
       - {{ calibre_web.lookup.paths.books }}:/books
     ports:
       - {{ calibre_web.container.host_port }}:8083
+{%- if bibliogram.install.autoupdate %}
+    labels:
+      - io.containers.autoupdate=registry
+{%- endif %}
     restart: unless-stopped

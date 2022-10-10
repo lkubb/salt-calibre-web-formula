@@ -8,6 +8,18 @@
 include:
   - {{ sls_config_clean }}
 
+{%- if calibre_web.install.autoupdate_service %}
+
+Podman autoupdate service is disabled for Calibre-Web:
+{%-   if calibre_web.install.rootless %}
+  compose.systemd_service_disabled:
+    - user: {{ calibre_web.lookup.user.name }}
+{%-   else %}
+  service.disabled:
+{%-   endif %}
+    - name: podman-auto-update.timer
+{%- endif %}
+
 Calibre-Web is absent:
   compose.removed:
     - name: {{ calibre_web.lookup.paths.compose }}

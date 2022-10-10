@@ -94,3 +94,15 @@ Calibre-Web is installed:
     - require:
       - user: {{ calibre_web.lookup.user.name }}
 {%- endif %}
+
+{%- if calibre_web.install.autoupdate_service is not none %}
+
+Podman autoupdate service is managed for Calibre-Web:
+{%-   if calibre_web.install.rootless %}
+  compose.systemd_service_{{ "enabled" if calibre_web.install.autoupdate_service else "disabled" }}:
+    - user: {{ calibre_web.lookup.user.name }}
+{%-   else %}
+  service.{{ "enabled" if calibre_web.install.autoupdate_service else "disabled" }}:
+{%-   endif %}
+    - name: podman-auto-update.timer
+{%- endif %}
