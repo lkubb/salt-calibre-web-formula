@@ -1,8 +1,14 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
 
-{%- set tplroot = tpldir.split('/')[0] %}
-{%- set sls_config_clean = tplroot ~ '.config.clean' %}
+{#-
+    Removes the calibre_web containers
+    and the corresponding user account and service units.
+    Has a depency on `calibre_web.config.clean`_.
+    If ``remove_all_data_for_sure`` was set, also removes all data.
+#}
+
+{%- set tplroot = tpldir.split("/")[0] %}
+{%- set sls_config_clean = tplroot ~ ".config.clean" %}
 {%- from tplroot ~ "/map.jinja" import mapdata as calibre_web with context %}
 
 include:
@@ -40,6 +46,25 @@ Calibre-Web compose file is absent:
     - name: {{ calibre_web.lookup.paths.compose }}
     - require:
       - Calibre-Web is absent
+
+{%- if calibre_web.install.podman_api %}
+
+Calibre-Web podman API is unavailable:
+  compose.systemd_service_dead:
+    - name: podman
+    - user: {{ calibre_web.lookup.user.name }}
+    - onlyif:
+      - fun: user.info
+        name: {{ calibre_web.lookup.user.name }}
+
+Calibre-Web podman API is disabled:
+  compose.systemd_service_disabled:
+    - name: podman
+    - user: {{ calibre_web.lookup.user.name }}
+    - onlyif:
+      - fun: user.info
+        name: {{ calibre_web.lookup.user.name }}
+{%- endif %}
 
 Calibre-Web user session is not initialized at boot:
   compose.lingering_managed:

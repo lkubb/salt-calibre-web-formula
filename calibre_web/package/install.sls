@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
 
-{%- set tplroot = tpldir.split('/')[0] %}
+{%- set tplroot = tpldir.split("/")[0] %}
 {%- from tplroot ~ "/map.jinja" import mapdata as calibre_web with context %}
 {%- from tplroot ~ "/libtofs.jinja" import files_switch with context %}
 
@@ -45,11 +44,28 @@ Calibre-Web paths are present:
     - require:
       - user: {{ calibre_web.lookup.user.name }}
 
+{%- if calibre_web.install.podman_api %}
+
+Calibre-Web podman API is enabled:
+  compose.systemd_service_enabled:
+    - name: podman
+    - user: {{ calibre_web.lookup.user.name }}
+    - require:
+      - Calibre-Web user session is initialized at boot
+
+Calibre-Web podman API is available:
+  compose.systemd_service_running:
+    - name: podman
+    - user: {{ calibre_web.lookup.user.name }}
+    - require:
+      - Calibre-Web user session is initialized at boot
+{%- endif %}
+
 Calibre-Web compose file is managed:
   file.managed:
     - name: {{ calibre_web.lookup.paths.compose }}
-    - source: {{ files_switch(['docker-compose.yml', 'docker-compose.yml.j2'],
-                              lookup='Calibre-Web compose file is present'
+    - source: {{ files_switch(["docker-compose.yml", "docker-compose.yml.j2"],
+                              lookup="Calibre-Web compose file is present"
                  )
               }}
     - mode: '0644'

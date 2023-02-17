@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # vim: ft=yaml
 ---
 calibre_web:
@@ -47,6 +46,7 @@ calibre_web:
     autoupdate: true
     autoupdate_service: false
     remove_all_data_for_sure: false
+    podman_api: true
   config:
     config_calibre_dir: /books
     config_kepubifypath: /usr/bin/kepubify
