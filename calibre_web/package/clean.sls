@@ -51,7 +51,7 @@ Calibre-Web compose file is absent:
 
 Calibre-Web podman API is unavailable:
   compose.systemd_service_dead:
-    - name: podman
+    - name: podman.socket
     - user: {{ calibre_web.lookup.user.name }}
     - onlyif:
       - fun: user.info
@@ -59,7 +59,7 @@ Calibre-Web podman API is unavailable:
 
 Calibre-Web podman API is disabled:
   compose.systemd_service_disabled:
-    - name: podman
+    - name: podman.socket
     - user: {{ calibre_web.lookup.user.name }}
     - onlyif:
       - fun: user.info

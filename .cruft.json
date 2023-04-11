@@ -1,6 +1,6 @@
 {
   "template": "https://github.com/lkubb/salt-template-formula-compose",
-  "commit": "97cd1b30d1525efd53961d1b7f365dbccb69d37e",
+  "commit": "d261bbd33723b1b8df5d67d58918868e3d70d76b",
   "checkout": null,
   "context": {
     "cookiecutter": {
@@ -21,7 +21,7 @@
       "project_name": "calibre_web",
       "containers": "calibre_web",
       "git_username": "lkubb",
-      "_lookup": {
+      "lookup": {
         "containers": {
           "calibre_web": {
             "image": "ghcr.io/linuxserver/calibre-web"
@@ -39,7 +39,7 @@
           "uid": 8004
         }
       },
-      "_settings": {
+      "settings": {
         "config": {
           "config_calibre_dir": "/books",
           "config_rarfile_location": "/usr/bin/unrar",

@@ -48,14 +48,14 @@ Calibre-Web paths are present:
 
 Calibre-Web podman API is enabled:
   compose.systemd_service_enabled:
-    - name: podman
+    - name: podman.socket
     - user: {{ calibre_web.lookup.user.name }}
     - require:
       - Calibre-Web user session is initialized at boot
 
 Calibre-Web podman API is available:
   compose.systemd_service_running:
-    - name: podman
+    - name: podman.socket
     - user: {{ calibre_web.lookup.user.name }}
     - require:
       - Calibre-Web user session is initialized at boot
