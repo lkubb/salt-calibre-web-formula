@@ -2,7 +2,7 @@
 
 {%- set tplroot = tpldir.split("/")[0] %}
 {%- from tplroot ~ "/map.jinja" import mapdata as calibre_web with context %}
-{%- from tplroot ~ "/libtofs.jinja" import files_switch with context %}
+{%- from tplroot ~ "/libtofsstack.jinja" import files_switch with context %}
 
 Calibre-Web user account is present:
   user.present:
@@ -64,14 +64,16 @@ Calibre-Web podman API is available:
 Calibre-Web compose file is managed:
   file.managed:
     - name: {{ calibre_web.lookup.paths.compose }}
-    - source: {{ files_switch(["docker-compose.yml", "docker-compose.yml.j2"],
-                              lookup="Calibre-Web compose file is present"
+    - source: {{ files_switch(
+                    ["docker-compose.yml", "docker-compose.yml.j2"],
+                    config=calibre_web,
+                    lookup="Calibre-Web compose file is present",
                  )
               }}
     - mode: '0644'
     - user: root
     - group: {{ calibre_web.lookup.rootgroup }}
-    - makedirs: True
+    - makedirs: true
     - template: jinja
     - makedirs: true
     - context:

@@ -1,9 +1,9 @@
 # vim: ft=sls
 
-{%- set tplroot = tpldir.split('/')[0] %}
-{%- set sls_package_install = tplroot ~ '.package.install' %}
+{%- set tplroot = tpldir.split("/")[0] %}
+{%- set sls_package_install = tplroot ~ ".package.install" %}
 {%- from tplroot ~ "/map.jinja" import mapdata as calibre_web with context %}
-{%- from tplroot ~ "/libtofs.jinja" import files_switch with context %}
+{%- from tplroot ~ "/libtofsstack.jinja" import files_switch with context %}
 
 include:
   - {{ sls_package_install }}
@@ -12,15 +12,17 @@ Calibre-Web environment files are managed:
   file.managed:
     - names:
       - {{ calibre_web.lookup.paths.config_calibre_web }}:
-        - source: {{ files_switch(['calibre_web.env', 'calibre_web.env.j2'],
-                                  lookup='calibre_web environment file is managed',
-                                  indent_width=10,
+        - source: {{ files_switch(
+                        ["calibre_web.env", "calibre_web.env.j2"],
+                        config=calibre_web,
+                        lookup="calibre_web environment file is managed",
+                        indent_width=10,
                      )
                   }}
     - mode: '0640'
     - user: root
     - group: __slot__:salt:user.primary_group({{ calibre_web.lookup.user.name }})
-    - makedirs: True
+    - makedirs: true
     - template: jinja
     - require:
       - user: {{ calibre_web.lookup.user.name }}

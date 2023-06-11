@@ -1,6 +1,5 @@
 # vim: ft=sls
 
-
 {#-
     Stops the calibre_web container services
     and disables them at boot time.
