@@ -1,3 +1,15 @@
+{%- set is_netfs = {} %}
+{%- for path in ["data", "books"] %}
+{%-   do is_netfs.update({
+        path: salt["cmd.run_stdout"](
+          "df -P '{data}' | ".format(data=calibre_web.lookup.paths[path]) ~
+          "awk 'BEGIN {e=1} $NF ~ /^\/.+/ { e=0 ; print $1 ; exit } END { exit e }'",
+          python_shell=true,
+        )
+      })
+-%}
+{%- endfor -%}
+
 ---
 version: "2.1"
 services:
@@ -7,8 +19,8 @@ services:
     env_file:
       - calibre_web.env
     volumes:
-      - {{ calibre_web.lookup.paths.data }}:/config
-      - {{ calibre_web.lookup.paths.books }}:/books
+      - {{ calibre_web.lookup.paths.data }}:/config{%- if not is_netfs.data %}:z{%- endif %}
+      - {{ calibre_web.lookup.paths.books }}:/books{%- if not is_netfs.books %}:z{%- endif %}
     ports:
       - {{ calibre_web.container.host_port }}:8083
 {%- if calibre_web.install.autoupdate %}
