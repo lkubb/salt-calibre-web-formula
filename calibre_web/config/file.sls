@@ -26,7 +26,7 @@ Calibre-Web environment files are managed:
     - template: jinja
     - require:
       - user: {{ calibre_web.lookup.user.name }}
-    - watch_in:
+    - require_in:
       - Calibre-Web is installed
     - context:
         calibre_web: {{ calibre_web | json }}

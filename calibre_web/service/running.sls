@@ -34,3 +34,4 @@ Calibre-Web service is running:
 {%- endif %}
     - watch:
       - Calibre-Web is installed
+      - sls: {{ sls_config_file }}

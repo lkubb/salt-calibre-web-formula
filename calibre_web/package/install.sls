@@ -26,6 +26,21 @@ Calibre-Web user account is present:
     - name: {{ calibre_web.lookup.media_group.name }}
     - gid: {{ calibre_web.lookup.media_group.gid }}
 {%- endif %}
+  file.append:
+    - names:
+      - {{ calibre_web.lookup.user.home | path_join(".bashrc") }}:
+        - text:
+          - export XDG_RUNTIME_DIR=/run/user/$(id -u)
+          - export DBUS_SESSION_BUS_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus
+
+      - {{ calibre_web.lookup.user.home | path_join(".bash_profile") }}:
+        - text: |
+            if [ -f ~/.bashrc ]; then
+              . ~/.bashrc
+            fi
+
+    - require:
+      - user: {{ calibre_web.lookup.user.name }}
 
 Calibre-Web user session is initialized at boot:
   compose.lingering_managed:
